@@ -87,7 +87,7 @@ class WPVQPlayers {
 		$this->resultsCounter 	=  array();
 		$this->pagesCount 		=  0;
 		$this->playersCount 	=  0;
-		
+
 		return $this;
 	}
 
@@ -106,7 +106,7 @@ class WPVQPlayers {
 
 		$firstPos 	=  ($page-1) * WPVQ_PLAYERS_PER_PAGE;
 		$lastPos 	=  $page * WPVQ_PLAYERS_PER_PAGE;
-		
+
 
 		$playersCount 			=  $wpdb->get_row($wpdb->prepare( 'SELECT COUNT(*) as count FROM ' . WPViralQuiz::getTableName('players') . ' WHERE quizId = %d', array(intval($quizId)) ));
 		$this->playersCount		=  $playersCount->count;
@@ -128,8 +128,8 @@ class WPVQPlayers {
 				$row = $wpdb->get_results($wpdb->prepare('SELECT * FROM ' . WPViralQuiz::getTableName('players') . ' WHERE quizId = %d ORDER BY id DESC LIMIT '.$firstPos.','.WPVQ_PLAYERS_PER_PAGE, array($quizId)));
 			}
 
-			
-			foreach($row as $player) 
+
+			foreach($row as $player)
 			{
 				$newPlayer = array(
 					'id'		=>  $player->id,
@@ -149,7 +149,7 @@ class WPVQPlayers {
 				}
 
 				// Fetch meta (serialized in DB)
-				if ($player->meta != NULL && $player->meta != '') 
+				if ($player->meta != NULL && $player->meta != '')
 				{
 					$metaRaw 	=  $player->meta;
 					$meta 		=  unserialize($metaRaw);
@@ -192,11 +192,19 @@ class WPVQPlayers {
 		if (!isset($param['nickname']) && !isset($param['email']) || !isset($param['result']) || !is_array($param)) {
 			throw new Exception("Bad parameter(s) when adding player.", 1);
 		}
-		
+		/*
 		$dataSql = array(
 			'quizId' 			=>  intval($this->quizId),
 			'email' 			=>  $param['email'],
 			'nickname' 			=>  $param['nickname'],
+			'result' 			=>  $param['result'],
+			'date' 				=>  time(),
+		);*/
+		/*Cambio en $dataSql que inserta los datos del usuario logueado en la tabla players*/
+		$dataSql = array(
+			'quizId' 			=>  intval($this->quizId),
+			'email' 			=>  wp_get_current_user()->user_email,
+			'nickname' 			=>  wp_get_current_user()->display_name,
 			'result' 			=>  $param['result'],
 			'date' 				=>  time(),
 		);
